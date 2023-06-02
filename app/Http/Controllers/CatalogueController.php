@@ -13,7 +13,7 @@ class CatalogueController extends Controller
      */
     public function index()
     {
-        $animes=Animes::OrderBy("nom")->get();
+        $animes=Animes::OrderBy("titre")->get();
         return Inertia::render("Catalogue",["animes"=>$animes]);
     }
 
@@ -38,7 +38,8 @@ class CatalogueController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $anime=Animes::find($id);
+        return Inertia::render("Anime",["anime"=>$anime]);
     }
 
     /**

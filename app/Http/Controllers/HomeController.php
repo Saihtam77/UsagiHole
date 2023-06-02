@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Animes;
+use App\Models\Articles;
+use App\Models\News;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
@@ -15,11 +18,15 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $animes = Animes::OrderBy("created_at", "desc")->where("seasonal","=",true)->get();
+        $articles=Articles::OrderBy("created_at","desc")->take(5)->get();
+        $news=News::OrderBy("created_at","desc")->take(5)->get();
         return Inertia::render('Home', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,1
+            'animes'=>$animes,
+            'articles'=>$articles
+            
         ]);
     }
 

@@ -14,8 +14,10 @@ const Navbar = () => {
                   <Link href={route("contact")}>Contact</Link>
                </li>
                <li>
-                  <Link href={route("catalogue")}>Catalogue</Link>
-                  
+                  <Link href="/catalogue">Catalogue</Link>
+               </li>
+               <li>
+                  <Link href="/blogs">Blogs</Link>
                </li>
             </ul>
          </section>

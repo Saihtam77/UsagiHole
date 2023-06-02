@@ -15,7 +15,7 @@ const ToolsBar_index = () => {
    };
    return (
       <section className={`flex sticky toolsBar ${toolsBarDisplay ? "active" : ""}`}>
-         <ToolsBar />
+         <ToolsBar state={toolsBarDisplay} />
         <ToolsBar_toogle toogleClick={toogleClick} />
       </section>
    );

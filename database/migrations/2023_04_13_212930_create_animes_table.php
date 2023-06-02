@@ -15,13 +15,15 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('nom');
+            $table->string('type');
+            $table->string('titre');
             $table->string('date_de_diffusion');
             $table->string("auteur_oeuvre_originelle");
             $table->string("genres");
             $table->string("studio");
             $table->text("synopsis");
-            $table->string("image");   
+            $table->string("image");
+            $table->boolean("seasonal");
         });
     }
 

@@ -5,12 +5,13 @@ import React from 'react';
 import Episodes_index from '@/Components/Home/Episodes/Episodes_index';
 import Articles_index from '@/Components/Home/Articles/Articles_index';
 
-const Home = () => {
+const Home = ({animes}) => {
+
     return (
         <Layout>
             <main className='flex flex-col min-h-screen gap-y-10'>
                 <News_index />
-                <Seasonals_index />
+                <Seasonals_index animes={animes} />
                 <Episodes_index />
                 <Articles_index />
             </main>

@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Animes;
+use DateTime;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AnimesController extends Controller
@@ -13,7 +16,9 @@ class AnimesController extends Controller
      */
     public function index()
     {
-
+        $animes = Animes::OrderBy("created_at", "desc")->get();
+ 
+        return Inertia::render("Dashboard/Animes", ["animes" => $animes]);
     }
 
     /**
@@ -21,7 +26,6 @@ class AnimesController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -31,55 +35,46 @@ class AnimesController extends Controller
     {
         $this->validate($request, [
 
-            "nom" => 'required',
+            "titre" => 'required',
             "date_de_diffusion" => 'required',
             "auteur_oeuvre_originelle" => 'required',
-            "genres"=>'required', 
-            "studio"=>'required', 
-            "image" => 'required',
+            "genres" => 'required',
+            "studio" => 'required',
+            "image" => 'required|image|mimes:jpg,png,jpeg|max:1999'
 
-        ],[
-            /* Gestion des messages d'erreurs */
-            'nom.required' => 'Le nom est obligatoire',
-            'date_de_diffusion.required' => 'Préciser la date de diffusion',
-            'auteur_oeuvre_originelle.required' => "l'auteur de l'oeuvre originelle doit être préciser",
-            'genres.required' => 'Préciser des genres',
-            'studio.required' => "Préciser le studio charger de la publication de l'oeuvres",
-            'image.required' => "une image pour accompagner l'oeuvre",
         ]);
 
-        
 
         /* Exportation des nouvelles donnée dans la base de donnée */
         $anime = new Animes;
 
-        $anime->nom = $request->input('nom');
+        $anime->type = $request->input('type');
+        $anime->titre = $request->input('titre');
         $anime->date_de_diffusion = $request->input('date_de_diffusion');
+        $anime->seasonal = $request->input('seasonal');
         $anime->auteur_oeuvre_originelle = $request->input('auteur_oeuvre_originelle');
         $anime->genres = $request->input('genres');
         $anime->studio = $request->input('studio');
         $anime->synopsis = $request->input('synopsis');
 
-        /*Créee un identifiant unique pour l'images et la stocke*/
-        if ($request->hasFile("image")) {
-            $filenameWithExt = $request->file('image')->getClientOriginalName();
-            /* recup le nom du fichier sans l'extension */
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            /* recup le l'extension du fichier */
-            $extension = $request->file('image')->getClientOriginalExtension();
-            /* stockage de l'image */
-            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+   
 
-            $path = $request->file('image')->storeAs('Animes/images', $fileNameToStore);
-        } else {
-            $fileNameToStore = "noimage.jpg";   
-        }
-        
+
+        /* Recuperation de l'image et traitement */
+        $filenameWithExt = $request->file('image')->getClientOriginalName();/* Recuperation du nom du ficher et de son extension */
+
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);  /* recup le nom du fichier sans l'extension */
+
+        $extension = $request->file('image')->getClientOriginalExtension(); /* recup le l'extension du fichier */
+
+        $fileNameToStore = $filename . '_' . time() . '.' . $extension; /* identification unique de l'images et stockage dans une variable */
+
+        $request->file('image')->storeAs("Images/Animes", $fileNameToStore); /* Stockage de l'image dans le storage */
+
         $anime->image = $fileNameToStore;
 
+        
         $anime->save();
-
-        return redirect()->route("catalogue")->with("success","Animes ajouter");
     }
 
     /**
@@ -87,7 +82,6 @@ class AnimesController extends Controller
      */
     public function show(string $id)
     {
-        //
     }
 
     /**
@@ -95,7 +89,7 @@ class AnimesController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        
     }
 
     /**
@@ -103,7 +97,53 @@ class AnimesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        
+        $this->validate($request, [
+
+            "titre" => 'required',
+            "date_de_diffusion" => 'required',
+            "auteur_oeuvre_originelle" => 'required',
+            "genres" => 'required',
+            "studio" => 'required',
+
+        ]);
+
+        $anime = Animes::find($id);
+
+
+        $anime->titre = $request->input('titre');
+        $anime->date_de_diffusion = $request->input('date_de_diffusion');
+        $anime->seasonal=$request->input('seasonal');
+        $anime->auteur_oeuvre_originelle = $request->input('auteur_oeuvre_originelle');
+        $anime->genres = $request->input('genres');
+        $anime->studio = $request->input('studio');
+        $anime->synopsis = $request->input('synopsis');
+        
+
+
+        if ($request->hasFile("image")) {
+
+            $this->validate($request, ["image" => 'image|mimes:jpg,png,jpeg|max:1999']);
+
+            $filenameWithExt = $request->file('image')->getClientOriginalName();/* Recuperation du nom du ficher et de son extension */
+
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);  /* recup le nom du fichier sans l'extension */
+
+            $extension = $request->file('image')->getClientOriginalExtension(); /* recup le l'extension du fichier */
+
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension; /* identification unique de l'images et stockage dans une variable */
+
+            $request->file('image')->storeAs("Images/Animes", $fileNameToStore); /* Stockage de l'image dans le storage */
+
+            Storage::delete("Images/Animes/" . $anime->image);/* Supression de la precedent image stocker */
+        } else {
+            $fileNameToStore = $anime->image;
+        }
+
+        $anime->image = $fileNameToStore;
+
+        /* Exportation des nouvelles donnée dans la base de donnée */
+        $anime->update();
     }
 
     /**
@@ -111,6 +151,10 @@ class AnimesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $anime = Animes::find($id);
+        if ($anime->image) {
+            Storage::delete("Images/Animes/" . $anime->image);
+        }
+        $anime->delete();
     }
 }

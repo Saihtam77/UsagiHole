@@ -1,0 +1,29 @@
+.collapse-list{
+    max-height: 32vh;
+    transition: all 0.5s ease-in-out;
+}
+.collapse-list.active{
+    max-height: 100vh;
+    transition: all 0.5s ease-in-out;
+   
+}
+
+.collapse-element{
+    overflow: hidden;
+    max-height: 0vh;
+    transition: all 0.5s ease-in-out;
+}
+
+.collapse-element.active{
+    max-height: 100vh;
+    transition: all 0.5s ease-in-out;
+    
+}
+
+.collapse-form{
+    display: none;
+}
+
+.collapse-form.active{
+    display: block;
+}
