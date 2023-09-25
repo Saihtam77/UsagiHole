@@ -18,15 +18,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $animes = Animes::OrderBy("created_at", "desc")->where("seasonal","=",true)->get();
-        $articles=Articles::OrderBy("created_at","desc")->take(5)->get();
-        $news=News::OrderBy("created_at","desc")->take(5)->get();
+        $animes = Animes::OrderBy("created_at", "desc")->where("seasonal", "=", true)->get();
+        $articles = Articles::OrderBy("created_at", "desc")->take(5)->get();
+        $news = News::OrderBy("created_at", "desc")->take(5)->get();
+
         return Inertia::render('Home', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-            'animes'=>$animes,
-            'articles'=>$articles
-            
+
+            'animes' => $animes,
+            'articles' => $articles,
+            'news' => $news
+
         ]);
     }
 
@@ -51,8 +54,10 @@ class HomeController extends Controller
      */
     public function show(string $id)
     {
-        //
+       
     }
+
+
 
     /**
      * Show the form for editing the specified resource.

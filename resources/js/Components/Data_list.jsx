@@ -1,10 +1,10 @@
-import {Link} from "@inertiajs/react";
-import React, {useState} from "react";
+import { Link } from "@inertiajs/react";
+import React, { useState } from "react";
 
 import Data_CRUD from "./Data_CRUD";
 import SearchBar from "./SearchBar";
 
-const Data_list = ({props}) => {
+const Data_list = ({ props }) => {
    const [collapseList, setCollapseList] = useState(false);
    const showMore = (e) => {
       e.preventDefault();
@@ -17,9 +17,8 @@ const Data_list = ({props}) => {
          <article className="flex flex-col items-center container mx-auto">
             {/* Crud */}
             <div
-               className={`flex flex-col gap-y-5  container overflow-auto collapse-list ${
-                  collapseList ? "active" : ""
-               }`}>
+               className={`flex flex-col gap-y-5  container overflow-auto collapse-list ${collapseList ? "active" : ""
+                  }`}>
                <div className="flex justify-center">
                   <SearchBar className="flex w-1/2 items-center gap-x-5" />
                </div>
@@ -36,7 +35,7 @@ const Data_list = ({props}) => {
                      {prop.type === "News" && (
                         <img
                            className=" rounded-lg w-28 max-h-28"
-                           src={"/storage/Images/News/" + prop.image}
+                           src={"/storage/Images/News/Thumbnail/" + prop.thumbnail}
                            alt="Images de la news"
                         />
                      )}

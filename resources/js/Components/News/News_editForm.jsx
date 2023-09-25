@@ -1,4 +1,4 @@
-import {router, useForm} from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import React from "react";
 import Input from "../Form/Input";
 import Label from "../Form/Label";
@@ -7,14 +7,15 @@ import InputError from "../InputError";
 import CheckBox from "../Form/Radio_input";
 import Radio_input from "../Form/Radio_input";
 
-const News_editForm = ({prop}) => {
-   const {data, setData, post, reset, processing, errors} = useForm({
+const News_editForm = ({ prop }) => {
+   const { data, setData, post, reset, processing, errors } = useForm({
       _method: "put",
 
       titre: prop.titre,
       date: prop.date,
       synopsis: prop.synopsis,
       news: prop.news,
+      thumbnail: prop.thumbnail,
       image: prop.image,
    });
 
@@ -72,11 +73,19 @@ const News_editForm = ({prop}) => {
             </article>
 
             {/* Image de l'article */}
-            <article>
-               <Label htmlFor="image" title="Images accompagnant l'article " />
-               <Input onChange={(e) => setData("image", e.target.files[0])} name="image" type="file" />
-               <InputError message={errors.image} />
-            </article>
+            <div className="flex flex-col gap-y-5">
+               <article>
+                  <Label htmlFor="image" title="Images accompagnant l'article " />
+                  <Input onChange={(e) => setData("image", e.target.files[0])} name="image" type="file" />
+                  <InputError message={errors.image} />
+               </article>
+               {/* thumbnail */}
+               <article>
+                  <Label htmlFor="thumbnail" title="Thumbnail de l'article" />
+                  <Input onChange={(e) => setData("thumbnail", e.target.files[0])} name="thumbnail" type="file" />
+                  <InputError message={errors.thumbnail} />
+               </article>
+            </div>
 
             <div className="flex justify-center">
                <button type="submit" className="bg-blue-400 rounded-lg p-2  w-1/2">

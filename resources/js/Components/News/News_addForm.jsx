@@ -13,6 +13,7 @@ const News_addForm = () => {
       synopsis: "",
       news: "",
       image: "",
+      thumbnail:"",
       type:"News"
    });
 
@@ -71,11 +72,19 @@ const News_addForm = () => {
             </article>
 
             {/* Image de l'article */}
-            <article>
-               <Label htmlFor="image" title="Images accompagnant l'article " />
-               <Input onChange={(e) => setData("image", e.target.files[0])} name="image" type="file" />
-               <InputError message={errors.image} />
-            </article>
+            <div className=" flex flex-col gap-y-5">
+               <article>
+                  <Label htmlFor="image" title="Images accompagnant la news " />
+                  <Input onChange={(e) => setData("image", e.target.files[0])} name="image" type="file" />
+                  <InputError message={errors.image} />
+               </article>
+               {/* thumbnail */}
+               <article>
+                  <Label htmlFor="thumbnail" title="Thumbnail de la news" />
+                  <Input onChange={(e) => setData("thumbnail", e.target.files[0])} name="thumbnail" type="file" />
+                  <InputError message={errors.thumbnail} />
+               </article>
+            </div>
 
             <div className="flex justify-center">
                <button type="submit" className="bg-blue-400 rounded-lg p-2  w-1/2">

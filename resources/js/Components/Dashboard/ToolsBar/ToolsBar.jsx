@@ -9,6 +9,9 @@ const ToolsBar = ({state}) => {
          <Link href={route("dashboard")} preserveState className="flex justify-center items-center border-y p-5 w-full">
             <p>Board</p>
          </Link>
+         <Link href={route("episodes.index")} preserveState className="flex justify-center items-center border-y p-5 w-full">
+            <p>Episode</p>
+         </Link>
          <Link  href={route("animes.index")} preserveState className="flex justify-center items-center border-y p-5 w-full">
             <p>Animes</p>  
          </Link>

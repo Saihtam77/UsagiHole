@@ -4,7 +4,7 @@ import React from "react";
 const Navbar = () => {
    const {auth} = usePage().props;
    return (
-      <header className="flex justify-between p-5 sticky top-0 z-50 bg-slate-300 ">
+      <header className="flex justify-between p-5 sticky top-0 z-50 bg-slate-300 lg:mb-5 ">
          <section className="flex">
             <ul className="flex gap-3">
                <li>

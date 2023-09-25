@@ -40,7 +40,7 @@ class AnimesController extends Controller
             "auteur_oeuvre_originelle" => 'required',
             "genres" => 'required',
             "studio" => 'required',
-            "image" => 'required|image|mimes:jpg,png,jpeg|max:1999'
+            "image" => 'required|image|mimes:jpg,png,jpeg|max:5046' 
 
         ]);
 

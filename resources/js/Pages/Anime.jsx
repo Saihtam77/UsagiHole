@@ -12,12 +12,12 @@ const Anime = ({anime}) => {
    return (
       <Layout>
          <main className="w-full flex flex-col min-h-screen">
-            <section className="flex flex-col container mx-auto p-5 mt-10 lg:flex-row">
-               <div className="flex justify-center items-center">
-                  <img src={"/storage/Images/Animes/" + anime.image} alt="Image de l'animes" />
+            <section className="flex flex-col lg:flex-row lg:justify-between p-5">
+               {/* Thubnail */}
+               <div className="lg:w-1/2 px-3 flex justify-center items-center bg-full thumbnail" style={{backgroundImage: `url("/storage/Images/Animes/${anime.image}")`}}>
                </div>
-
-               <article className=" flex flex-col justify-between px-5">
+               {/* Infos */}
+               <article className=" flex flex-col justify-end px-5">
                   <header className="flex justify-center p-3 text-2xl">
                      <b>{anime.titre}</b>
                   </header>
@@ -29,7 +29,7 @@ const Anime = ({anime}) => {
                         <li><b>Studio:</b> {anime.studio}</li>
                         <li><b>Genres:</b> {anime.genres}</li>
                      </ul>
-                     
+                    
                      <Link
                         as="button"
                         onClick={showMore}

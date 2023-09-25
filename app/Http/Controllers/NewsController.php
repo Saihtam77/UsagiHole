@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class NewsController extends Controller
@@ -37,7 +38,8 @@ class NewsController extends Controller
             "titre" => 'required',
             "synopsis" => 'required',
             "news" => 'required',
-            "image" => 'required|image|mimes:jpg,png,jpeg|max:1999'
+            "thumbnail" => 'required|image|mimes:jpg,png,jpeg|max:5048', // 5MB Max
+            "image" => 'required|image|mimes:jpg,png,jpeg|max:5048'
 
         ]);
 
@@ -51,18 +53,25 @@ class NewsController extends Controller
         $news->news = $request->input('news');
 
 
-        /* Recuperation de l'image et traitement */
-        $filenameWithExt = $request->file('image')->getClientOriginalName();/* Recuperation du nom du ficher et de son extension */
 
-        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);  /* recup le nom du fichier sans l'extension */
+        /* Recuperation de la l'image, thumbnail et traitement */
 
-        $extension = $request->file('image')->getClientOriginalExtension(); /* recup le l'extension du fichier */
+        $thumbnailWithExt = $request->file('thumbnail')->getClientOriginalName();/* Recuperation du nom du ficher et de son extension */
+        $imageWithExt = $request->file('image')->getClientOriginalName();
 
-        $fileNameToStore = $filename . '_' . time() . '.' . $extension; /* identification unique de l'images et stockage dans une variable */
+        $thumbnail = pathinfo($thumbnailWithExt, PATHINFO_FILENAME);  /* recup le nom du fichier sans l'extension */
+        $image = pathinfo($imageWithExt, PATHINFO_FILENAME);
+        $thumbnailextension = $request->file('thumbnail')->getClientOriginalExtension(); /* recup le l'extension du fichier */
+        $imagextension = $request->file('image')->getClientOriginalExtension();
 
-        $request->file('image')->storeAs("Images/News", $fileNameToStore); /* Stockage de l'image dans le storage */
+        $thumbnailToStore = $thumbnail . '_' . time() . '.' . $thumbnailextension; /* identification unique de l'images et stockage dans une variable */
+        $imageToStore = $image . '_' . time() . '.' . $imagextension;
 
-        $news->image = $fileNameToStore;
+        $request->file('thumbnail')->storeAs("Images/News/Thumbnail", $thumbnailToStore); /* Stockage de l'image dans le storage */
+        $request->file('image')->storeAs("Images/News", $imageToStore);
+
+        $news->thumbnail = $thumbnailToStore;
+        $news->image = $imageToStore;
 
         $news->save();
     }
@@ -71,7 +80,6 @@ class NewsController extends Controller
      */
     public function show(string $id)
     {
-        //
     }
 
     /**
@@ -93,6 +101,18 @@ class NewsController extends Controller
             "titre" => 'required',
             "synopsis" => 'required',
             "news" => 'required',
+            "thumbnail" => [
+                Rule::when(
+                    $request->hasFile("thumbnail"),
+                    ['image|mimes:jpg,png,jpeg|max:5048']
+                )
+            ],
+            "image" => [
+                Rule::when(
+                    $request->hasFile("image"),
+                    ['image|mimes:jpg,png,jpeg|max:5048']
+                )
+            ]
         ]);
 
 
@@ -105,25 +125,32 @@ class NewsController extends Controller
 
 
         /* Recuperation de l'image et traitement */
-        if ($request->hasFile("image")) {
-            $filenameWithExt = $request->file('image')->getClientOriginalName();/* Recuperation du nom du ficher et de son extension */
+        if ($request->hasFile("image") || $request->hasFile("thumbnail")) {
+            $thumbnailWithExt = $request->file('thumbnail')->getClientOriginalName();/* Recuperation du nom du ficher et de son extension */
+            $imageWithExt = $request->file('image')->getClientOriginalName();
 
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);  /* recup le nom du fichier sans l'extension */
+            $thumbnail = pathinfo($thumbnailWithExt, PATHINFO_FILENAME);  /* recup le nom du fichier sans l'extension */
+            $image = pathinfo($imageWithExt, PATHINFO_FILENAME);
+            $thumbnailextension = $request->file('thumbnail')->getClientOriginalExtension(); /* recup le l'extension du fichier */
+            $imagextension = $request->file('image')->getClientOriginalExtension();
 
-            $extension = $request->file('image')->getClientOriginalExtension(); /* recup le l'extension du fichier */
+            $thumbnailToStore = $thumbnail . '_' . time() . '.' . $thumbnailextension; /* identification unique de l'images et stockage dans une variable */
+            $imageToStore = $image . '_' . time() . '.' . $imagextension;
 
-            $fileNameToStore = $filename . '_' . time() . '.' . $extension; /* identification unique de l'images et stockage dans une variable */
-
-            $request->file('image')->storeAs("Images/News", $fileNameToStore); /* Stockage de l'image dans le storage */
+            $request->file('thumbnail')->storeAs("Images/News/Thumbnail", $thumbnailToStore); /* Stockage de l'image dans le storage */
+            $request->file('image')->storeAs("Images/News", $imageToStore);
 
             Storage::delete("Images/News/" . $news->image);/* Supression de la precedent image stocker */
-        }
-        else{
-            $fileNameToStore=$news->image;
+            Storage::delete("Images/News/Thumbnail" . $news->thumbnail); // Supression de la thumbnail
+        } else {
+            $fileNameToStore = $news->image;
+            $thumbnailToStore = $news->thumbnail;
         }
 
         /* exportation  de l'image */
         $news->image = $fileNameToStore;
+        $news->thumbnail = $thumbnailToStore;
+
         $news->update();
     }
 
@@ -133,8 +160,9 @@ class NewsController extends Controller
     public function destroy(string $id)
     {
         $news = News::find($id);
-        if ($news->image) {
+        if ($news->image || $news->thumbnail) {
             Storage::delete("Images/News/" . $news->image);
+            Storage::delete("Images/News/Thumbnail/" . $news->thumbnail);
         }
         $news->delete();
     }

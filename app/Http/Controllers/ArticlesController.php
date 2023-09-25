@@ -38,7 +38,7 @@ class ArticlesController extends Controller
             "titre" => 'required',
             "synopsis" => 'required',
             "article" => 'required',
-            "image" => 'required|image|mimes:jpg,png,jpeg|max:1999'
+            "image" => 'required|image|mimes:jpg,png,jpeg|max:5048' // 5MB Max
 
         ]);
 
@@ -89,11 +89,12 @@ class ArticlesController extends Controller
     public function update(Request $request, string $id)
     {
         
-        $this->validate($request, [
+            $this->validate($request, [
 
             "titre" => 'required',
             "synopsis" => 'required',
             "article" => 'required',
+            "image" => 'image|mimes:jpg,png,jpeg|max:5048' // 5MB Max
            
         ]);
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\BlogsController;
 
 /* Dashboard */
 use App\Http\Controllers\ArticlesController;
+use App\Http\Controllers\EpisodesController;
 use App\Http\Controllers\NewsController;
 
 
@@ -38,10 +39,14 @@ Route::prefix("/")->group(function () {
     Route::resource('catalogue', CatalogueController::class);
     Route::resource('blogs', BlogsController::class);
     
-
+    
     Route::get("", [HomeController::class, "index"])->name("home");
+
     Route::get("catalogue", [CatalogueController::class, "index"])->name("catalogue");
+
     Route::get("blogs", [BlogsController::class, "index"])->name("blogs");
+    Route::get("blogs/news/{id}", [BlogsController::class, "showNews"]);
+    Route::get("blogs/articles/{id}", [BlogsController::class, "showArticle"]);
 
     Route::get("contact", function () {
         return Inertia::render("Contact");
@@ -64,6 +69,7 @@ Route::middleware(['auth','verified'])->prefix("/Dashboard")->group(function () 
     Route::resource('animes', AnimesController::class);
     Route::resource('articles', ArticlesController::class);
     Route::resource('news', NewsController::class);
+    Route::resource('episodes', EpisodesController::class);
 
 
 

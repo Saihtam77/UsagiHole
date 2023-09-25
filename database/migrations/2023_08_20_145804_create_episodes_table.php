@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Animes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,15 +12,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('news', function (Blueprint $table) {
+        Schema::create('episodes', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string("type");
-            $table->string("titre");
-            $table->text("synopsis");
-            $table->text("news");
-            $table->string("thumbnail");
-            $table->string("image");
+
+            $table->string('titre');
+            $table->integer('numero');
+
+            $table->string('video');
+            
+            $table->foreignIdFor(Animes::class)
+                ->references("id")
+                ->on("animes")
+                ->onDelete('cascade');
         });
     }
 
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('news');
+        Schema::dropIfExists('episodes');
     }
 };
